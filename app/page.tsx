@@ -3,8 +3,6 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-const DURATIONS = [15, 30, 60];
-
 const WORDS = [
   "apple",
   "orange",
@@ -54,22 +52,23 @@ function renderText(target: string, input: string) {
   const inputChars = input.split("");
   console.log({ chars, target, input, inputChars });
 
-  return chars.map((char, idx) => (
-    <span
-      key={idx}
-      className={`font-mono text-3xl
-          ${idx < inputChars.length ? "opacity-100 " : "opacity-50 "} 
-          ${
-            idx === inputChars.length
-              ? "underline decoration-2 decoration-blue-500 tracking-wider"
-              : ""
-          }
-          ${char === "." ? "text-black" : ""}
-        `}
-    >
-      {char}
-    </span>
-  ));
+  return chars.map((char, idx) => {
+    const isCurrent = idx === inputChars.length;
+    return (
+      <span
+        key={idx}
+        className={`char font-mono text-3xl ${
+          idx < inputChars.length ? "opacity-100" : "opacity-50"
+        } ${
+          isCurrent
+            ? "current underline decoration-2 decoration-blue-500 tracking-wider"
+            : ""
+        } ${char === "." ? "text-black" : ""}`}
+      >
+        {char}
+      </span>
+    );
+  });
 }
 
 type Position = {
@@ -96,7 +95,7 @@ const HomePage: React.FC = () => {
       if (e.key === expectedChar) {
         setCurrentPosition((prev) => {
           let { word, char } = prev;
-          if (char + 1 >= targetText.split(" ")[word].length) {
+          if (char + 1 >= targetText.split(".")[word].length) {
             word += 1;
             char = 0;
           } else {
@@ -110,7 +109,6 @@ const HomePage: React.FC = () => {
     [input.length]
   );
 
-  console.log(currentPosition);
   useEffect(() => {
     inputRef.current?.focus();
     window.addEventListener("keypress", handleKeyDown);
