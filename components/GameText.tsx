@@ -30,9 +30,8 @@ const GameText = ({ target, input, correctLogs }: GameTextProps) => {
           "opacity-100": !isTypedChar,
           "current underline decoration-2 decoration-blue-500 font-black! border-l-2 animate-blink-border":
             isCurrent,
-          // "text-green-500": isTypedChar && isCorrect,
           "text-red-500": isTypedChar && !isCorrect,
-          "text-black!": isDot,
+          "text-background": isDot,
           "bg-red-500 text-red-500! opacity-50! rounded": isDotError,
         })}
       >
