@@ -61,7 +61,7 @@ const Game = ({ targetText }: GameProps) => {
         });
       }
     },
-    [correctLogs]
+    [correctLogs, isTimeUp]
   );
 
   useEffect(() => {
