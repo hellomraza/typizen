@@ -1,4 +1,5 @@
 "use client";
+import { useCounter } from "@/hooks/useCounter";
 import { useCallback, useEffect, useState } from "react";
 import GameText from "./GameText";
 
@@ -9,8 +10,25 @@ const Game = ({ targetText }: GameProps) => {
   const [input, setInput] = useState("");
   const [correctLogs, setCorrectLogs] = useState<string>("");
 
+  const {
+    timerDuration,
+    timeRemaining,
+    isTimerStarted,
+    isTimeUp,
+    startTimer,
+    changeTimerDuration,
+  } = useCounter(30);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      // Prevent typing if time is up
+      if (isTimeUp) return;
+
+      // Start timer on first keypress
+      if (!isTimerStarted) {
+        startTimer();
+      }
+
       let expectedChar = targetText[correctLogs.length];
       if (expectedChar === ".") {
         expectedChar = " ";
@@ -20,11 +38,14 @@ const Game = ({ targetText }: GameProps) => {
       }
       setInput((prev) => (e.key === " " ? prev + "." : prev + e.key));
     },
-    [targetText, correctLogs.length]
+    [targetText, correctLogs.length, isTimeUp, isTimerStarted, startTimer]
   );
 
   const handleBackspace = useCallback(
     (e: KeyboardEvent) => {
+      // Prevent backspace if time is up
+      if (isTimeUp) return;
+
       if (e.key === "Backspace") {
         setInput((prev) => {
           if (prev.length === 0) return prev;
@@ -53,17 +74,55 @@ const Game = ({ targetText }: GameProps) => {
   }, [handleKeyDown, handleBackspace]);
 
   return (
-    <div
-      tabIndex={0}
-      className="max-w-6xl mx-auto px-8 group leading-6 gr relative"
-    >
+    <div>
+      {/* Timer Controls */}
+      <div className="max-w-6xl mx-auto px-8 mb-4 flex items-center justify-between">
+        <div className="flex gap-2">
+          {[10, 30, 60, 120].map((duration) => (
+            <button
+              key={duration}
+              onClick={() => changeTimerDuration(duration)}
+              disabled={isTimerStarted}
+              className={`px-4 py-2 rounded ${
+                timerDuration === duration
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-800"
+              } ${
+                isTimerStarted
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-blue-400 hover:text-white"
+              }`}
+            >
+              {duration}s
+            </button>
+          ))}
+        </div>
+        <div className="text-2xl font-bold">
+          {isTimeUp ? (
+            <span className="text-red-500">Time&apos;s Up!</span>
+          ) : (
+            <span>{timeRemaining}s</span>
+          )}
+        </div>
+      </div>
+
+      {/* Game Area */}
       <div
-        className={`flex ml-[50%]`}
-        style={{
-          translate: -input.length * 16.86,
-        }}
+        tabIndex={0}
+        className="max-w-6xl mx-auto px-8 group leading-6 gr relative"
       >
-        <GameText correctLogs={correctLogs} target={targetText} input={input} />
+        <div
+          className={`flex ml-[50%]`}
+          style={{
+            translate: -input.length * 16.86,
+          }}
+        >
+          <GameText
+            correctLogs={correctLogs}
+            target={targetText}
+            input={input}
+          />
+        </div>
       </div>
     </div>
   );
