@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { memo } from "react";
 
 type GameTextProps = {
   target: string;
@@ -41,4 +42,4 @@ const GameText = ({ target, input, correctLogs }: GameTextProps) => {
   });
 };
 
-export default GameText;
+export default memo(GameText);
