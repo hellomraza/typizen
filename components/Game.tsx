@@ -29,14 +29,14 @@ const Game = ({ targetText }: GameProps) => {
         startTimer();
       }
 
-      let expectedChar = targetText[correctLogs.length];
-      if (expectedChar === ".") {
-        expectedChar = " ";
+      const typedChar = e.key === " " ? "." : e.key;
+
+      const expectedChar = targetText[correctLogs.length];
+
+      if (typedChar === expectedChar) {
+        setCorrectLogs((prev) => prev + typedChar);
       }
-      if (e.key === expectedChar) {
-        setCorrectLogs((prev) => prev + (e.key === " " ? "." : e.key));
-      }
-      setInput((prev) => (e.key === " " ? prev + "." : prev + e.key));
+      setInput((prev) => prev + typedChar);
     },
     [targetText, correctLogs.length, isTimeUp, isTimerStarted, startTimer]
   );
