@@ -20,9 +20,7 @@ const HomePage: React.FC = async () => {
   return (
     <main className="min-h-screen flex  flex-col items-center p-4">
       <div className="mt-20">
-        <h1 className="text-4xl font-bold text-center mb-20">
-          Typizen — MonkeyType style
-        </h1>
+        <h1 className="text-4xl font-bold text-center mb-20">Typizen</h1>
         <Game targetText={targetText} />
       </div>
     </main>
